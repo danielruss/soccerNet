@@ -1,29 +1,30 @@
 import Papa from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm'
-import { SOCcer3 } from "./soccer3.js";
+import XLSX from "https://cdn.sheetjs.com/xlsx-latest/package/xlsx.mjs"
+import { SOCcer3, availableCodingSystems } from "./soccer3.js";
 
 let soccer = null;
 // this is set to balance speed vs update time
 let papa_parse_chunkSize = 4 * 1024;
 
-self.onmessage = async function(e) {
-    switch (e.data?.type){
-    case "version":
-        soccer = new SOCcer3(e.data.version)
-        await soccer.wait_until_ready();
-        postMessage({type:"ready"})
-        break;
-    case "versions":
-        postMessage({soccerVersion:soccer.version,n:this.n})
-        break;
-    case "parse_file":
-        if (!soccer){
-            console.error("Falsy Soccer: ",soccer)
-            postMessage({type:"error",error:"soccer is not defined yet."})
-        }
-        parse_file(e.data.file)
-        break;
-    default:
-        console.error(`Unkown message type in the soccerWorker: ${e.data?.type}`)
+self.onmessage = async function (e) {
+    switch (e.data?.type) {
+        case "version":
+            soccer = new SOCcer3(e.data.version)
+            await soccer.wait_until_ready();
+            postMessage({ type: "ready" })
+            break;
+        case "versions":
+            postMessage({ soccerVersion: soccer.version, n: this.n })
+            break;
+        case "parse_file":
+            if (!soccer) {
+                console.error("Falsy Soccer: ", soccer)
+                postMessage({ type: "error", error: "soccer is not defined yet." })
+            }
+            parse_file(e.data.file)
+            break;
+        default:
+            console.error(`Unkown message type in the soccerWorker: ${e.data?.type}`)
     }
 }
 
@@ -36,96 +37,143 @@ function removeExtension(filename) {
     return filename.substring(0, filename.lastIndexOf('.')) || filename;
 }
 
-async function parse_file(file){
-    switch(file.type){
+async function parse_file(file) {
+    switch (file.type) {
         case "text/csv":
             parse_csv(file)
+            break;
+        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            parse_xlsx(file)
             break;
         default:
             console.error(`Cannot handle files of type ${file.type}`)
     }
 }
 async function parse_csv(file) {
-    let rows=0;
-    let firstChunk=true;
+    let rows = 0;
+    let firstChunk = true;
 
     // get the OPFS root...
     const root = await navigator.storage.getDirectory();
-    let outputFilename = removeExtension(file.name)+"_soccer_output.csv"
+    let outputFilename = removeExtension(file.name) + "_soccer_output.csv"
     const outputFileHandle = await root.getFileHandle(outputFilename, { create: true });
     let metadata = {
-        soccerVersion:soccer.version,
-        inputFilename:file.name,
-        startTime:new Date(),
+        soccerVersion: soccer.version,
+        inputFilename: file.name,
+        startTime: new Date(),
     }
     const writable = await outputFileHandle.createWritable();
-    console.log(outputFileHandle)
-    
 
-    Papa.parse(file,{
-        skipEmptyLines:true,
-        header:true,
+
+    Papa.parse(file, {
+        skipEmptyLines: true,
+        header: true,
         chunkSize: papa_parse_chunkSize,
-        chunk:async function(results, parser){
+        chunk: async function (results, parser) {
             parser.pause()
             results.meta.start_row = rows;
             let soccer_results = await soccer.code_papa_chunk(results)
-            await add_chunk_to_opfs(soccer_results,writable,firstChunk);
+            await add_chunk_to_opfs(soccer_results, writable, firstChunk);
             //send an update...
-            rows+=results.data.length;
-            postMessage({type:"update",completed:results.meta.cursor,total:parser.streamer._input.size,rows:rows});
-            firstChunk=false;
+            rows += results.data.length;
+            postMessage({ type: "update", completed: results.meta.cursor, total: parser.streamer._input.size, rows: rows });
+            firstChunk = false;
             parser.resume()
         },
-        complete:async function(results,file){
+        complete: async function (results, file) {
             await writable.close()
             metadata.endTime = new Date();
-            postMessage({type:"parse_complete",fileHandle:outputFileHandle,metadata:metadata});
+            postMessage({ type: "parse_complete", fileHandle: outputFileHandle, metadata: metadata });
         }
     })
-    
-    
 }
+async function parse_xlsx(file) {
+    const workbook = await XLSX.read(await file.arrayBuffer(), { type: "array" });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    // get the OPFS root...
+    const root = await navigator.storage.getDirectory();
+    let outputFilename = removeExtension(file.name) + "_soccer_output.csv"
+    const outputFileHandle = await root.getFileHandle(outputFilename, { create: true });
+    let metadata = {
+        soccerVersion: soccer.version,
+        inputFilename: file.name,
+        startTime: new Date(),
+    }
+    const writable = await outputFileHandle.createWritable();
+
+    const chunkSize = 25;
+
+    let fields = Object.keys(data[0])
+    console.log(fields)
+    for (let row = 0; row < data.length; row += chunkSize) {
+        let firstChunk = row == 0;
+        let lastRow = Math.min(row + chunkSize, data.length)
+        let chunk = data.slice(row, lastRow);
+        console.log(`chunk ${row} -> ${lastRow - 1}`)
+
+        //data{Id,JobTitle,JobTask,soc1980...}
+        // meta start_row and maybe fields...
+        // handle the chunk .. make it look like papa.parse...
+        let results = {
+            data: chunk,
+            meta: {
+                start_row: row,
+                fields: fields
+            }
+        }
+        let soccer_results = await soccer.code_papa_chunk(results)
+        await add_chunk_to_opfs(soccer_results, writable, firstChunk);
+        postMessage({ type: "update", completed: lastRow, total: data.length, rows: lastRow });
+        firstChunk = false;
+
+    }
+    await writable.close()
+    metadata.endTime = new Date();
+    postMessage({ type: "parse_complete", fileHandle: outputFileHandle, metadata: metadata });
+}
+
 
 /*******************************************************************
  *  results handling
  *******************************************************************/
-async function add_chunk_to_opfs(results,out,firstChunk){
+async function add_chunk_to_opfs(results, out, firstChunk) {
     // either add CSV or JSON to the output.
     // the client will deal the conversion...
-    await add_csv_chunk(results,out,firstChunk)
+    await add_csv_chunk(results, out, firstChunk)
 }
 
-async function add_csv_chunk(results,out,firstChunk){
+async function add_csv_chunk(results, out, firstChunk) {
     // create the fields order...
     let all_fields = results.fields;
-    for (let i=1; i<=results.codes[0].length; i++){
-        all_fields.push(`soc2010_${i}`,`title_${i}`,`score_${i}`)
+    for (let i = 1; i <= results.codes[0].length; i++) {
+        all_fields.push(`soc2010_${i}`, `title_${i}`, `score_${i}`)
     }
 
     // make and fill an object for papa parse...
     let data_to_write = {
-        fields:all_fields,
-        data:[]
+        fields: all_fields,
+        data: []
     }
     for (let i = 0; i < results.input.length; i++) {
         let obj = {}
-        for (let field of results.fields){
+        for (let field of results.fields) {
             obj[field] = results.input[i][field]
         }
-        for (let j = 0;j< results.codes[0].length;j++){
-            obj[`soc2010_${j+1}`]=results.codes[i][j];
-            obj[`title_${j+1}`]=results.titles[i][j];
-            obj[`score_${j+1}`]=results.scores[i][j];
+        for (let j = 0; j < results.codes[0].length; j++) {
+            obj[`soc2010_${j + 1}`] = results.codes[i][j];
+            obj[`title_${j + 1}`] = results.titles[i][j];
+            obj[`score_${j + 1}`] = results.scores[i][j];
         }
         data_to_write.data.push(obj);
     }
 
-    await out.write(Papa.unparse(data_to_write,{header:firstChunk})+"\n");
+    await out.write(Papa.unparse(data_to_write, { header: firstChunk }) + "\n");
 }
 
 
-self.postMessage( {type:"initialized"})
+self.postMessage({ type: "initialized" })
 
 
 

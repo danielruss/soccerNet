@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script src="./soccer3_gui.js" type="module"></script>
-        <style>
-            fieldset {
-                margin: 5px;
-            }
-        </style>
-    </head>
-    <body>
-        <label for="formFile" class="form-label">Job Description file:</label>
-        <input class="form-control" id="file" type="file" accept="application/json,text/csv">
-        <label for="outputFormat">output format:</label>
-        <select id="outputFormat">
-            <option value="csv">CSV</option>
-            <option value="xlsx" selected>XLSX</option>
-            <option value="json">JSON</option>
-        </select>
-        <fieldset>
-            <label for="coding">Job Coding progress:</label>
-            <progress id="coding" value="0" max="100"></progress>
-            <span id="pct"></span>
-        </fieldset>
 
-        <div id="tokenDiv"></div>
-        <div id="embeddingDiv"></div>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./soccer3_gui.js" type="module"></script>
+    <style>
+        fieldset {
+            margin: 5px;
+        }
+
+        form {
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <label for="formFile" class="form-label">Job Description file:</label>
+    <!-- we don't yet accept JSON -->
+    <input class="form-control" id="file" type="file"
+        accept="application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+    <label for="outputFormat">output format:</label>
+    <select id="outputFormat">
+        <option value="csv">CSV</option>
+        <option value="xlsx" selected>XLSX</option>
+        <option value="json">JSON</option>
+    </select>
+    <fieldset>
+        <label for="coding">Job Coding progress:</label>
+        <progress id="coding" value="0" max="100"></progress>
+        <span id="pct"></span>
+    </fieldset>
+
+    <div id="tokenDiv"></div>
+    <div id="embeddingDiv"></div>
+    <form id="oneJobDescription">
+        <label for="oneTitle">Job Title: </label>
+        <input id="oneTitle" type="text">
+        <label for="oneTask">Job Task: </label>
+        <input id="oneTask" type="text">
+        <p>
+            <label for="soc1980">soc1980: </label>
+            <input id="oneSoc1980" type="text">
+            <label for="noc2011">noc2011: </label>
+            <input id="oneNoc2011" type="text">
+        </p>
+        <input id="code1Job" type="button" value="Code Job Description">
+    </form>
+    <table id="oneResults"></table>
+</body>
+
 </html>
