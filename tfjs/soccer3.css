@@ -1,0 +1,34 @@
+fieldset {
+    margin: 5px 0px;
+}
+
+form {
+    margin: 5px 0px;
+    padding: 10px 0px;
+    border-top: thin solid #EEEDEB;
+}
+
+input[type="radio"] {
+    display: none;
+    margin: 0px;
+}
+
+input[type="radio"]:checked+label {
+    color: #3C3633;
+    padding: 5px;
+    margin: 5px 0px;
+    border-top: thin solid #3C3633;
+    border-right: thin solid #3C3633;
+    border-left: thin solid #3C3633;
+}
+
+input[type="radio"]+label {
+    color: #E0CCBE;
+    padding: 5px;
+    margin: 5px 0px;
+}
+
+.tab-content {
+    border-top: 50px solid #3C3633;
+    background-color: yellowgreen;
+}

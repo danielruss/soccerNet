@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="index.js" type="module"></script>
+    <link rel="stylesheet" href="soccernet.css">
+
+<body>
+    <select>
+        <option value="3.0.5">SOCcerNet 1.0.0</option>
+    </select>
+    <div id="file_input" class="input_div">
+        <form id="fileJobDescription">
+            <span class="formHeader">Code a File containing Job Descriptions</span>
+            <label for="jobfile">Job Description File: </label>
+            <label for="n">number of codes returned: </label>
+            <input id="jobfile" type="file"
+                accept="application/json,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            <input id="n" type="number" value="10" min="1">
+            <label for="outputFormat">output format:</label><span></span>
+            <select id="outputFormat">
+                <option value="csv">CSV</option>
+                <option value="xlsx" selected>XLSX</option>
+                <!-- <option value="json">JSON</option> -->
+            </select>
+            <span></span>
+            <input id="codeJobs" type="button" value="Code Job Description">
+            <label for="codingProgress">coding Progress: <span id="pctSpan"></span></label><span></span>
+            <progress id="codingProgress" max="100" value="0"></progress>
+        </form>
+    </div>
+    <hr>
+    <div id="single_job_input" class="input_div">
+        <form id="oneJobDescription">
+            <span class="formHeader">Code an example Job Descriptions</span>
+            <label for="oneTitle">Job Title: </label>
+            <label for="oneTask">Job Task: </label>
+            <input id="oneTitle" type="text">
+            <input id="oneTask" type="text">
+
+            <label for="soc1980">soc1980: </label>
+            <label for="noc2011">noc2011: </label>
+            <input id="oneSoc1980" type="text">
+            <input id="oneNoc2011" type="text">
+
+            <label for="n1">number of codes returned: </label><span></span>
+            <input id="n1" type="number" value="10"><span></span>
+
+            <span></span><span></span>
+            <input id="code1Job" type="button" value="Code Job Description">
+        </form>
+    </div>
+
+    <div id="soccer_results">
+        <table id="res_table"></table>
+    </div>
+</body>
+
+</html>
