@@ -1,5 +1,5 @@
 import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@latest';
-import { abbrev } from '../abbrev.js'
+import { abbrev } from './abbrev.js'
 
 export async function getEmbbedder(info) {
     let embedder = pipeline('feature-extraction', info.embedding_model_name, { quantized: false })
