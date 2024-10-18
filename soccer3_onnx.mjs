@@ -14,14 +14,16 @@ export class SOCcer3 {
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "version": "3.0.5",
             "pooling": "cls",
-            "soccerNetVersion": "0.0.1"
+            "soccerNetVersion": "0.0.1",
+            "train_data": "May2024"
         },
         "3.0.6": {
             "soccer_url": "./SOCcer_v3.0.6.onnx",
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "version": "3.0.6",
             "pooling": "cls",
-            "soccerNetVersion": "0.0.2"
+            "soccerNetVersion": "0.0.2",
+            "train_data": "Oct2024"
         }
     }));
 
