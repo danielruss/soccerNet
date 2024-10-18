@@ -1,11 +1,11 @@
-import { soc2010_6digit, soc2010_info } from './common.js';
+import { soc2010_info } from './common.js';
 import localforage from 'https://cdn.jsdelivr.net/npm/localforage@1.10.0/+esm'
 
 const calcIndex = (row, col) => row * 840 + col
 const knownCrosswalks = new Map([
     ["soc1980", "https://danielruss.github.io/codingsystems/soc1980_soc2010.json"],
     ["noc2011", "https://danielruss.github.io/codingsystems/noc2011_soc2010_via_soc2018.json"],
-    ["soc2018", "https://danielruss.github.io/codingsystems/soc2010_soc2018.json"]
+    ["isco1988", "https://danielruss.github.io/codingsystems/isco1988_soc2010.json"]
 ])
 export const availableCodingSystems = Array.from(knownCrosswalks.keys());
 
