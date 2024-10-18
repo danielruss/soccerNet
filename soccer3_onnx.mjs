@@ -13,9 +13,16 @@ export class SOCcer3 {
             "soccer_url": "./SOCcer_v3.0.5.onnx",
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "version": "3.0.5",
-            "pooling": "cls"
+            "pooling": "cls",
+            "soccerNetVersion": "0.0.1"
         },
-
+        "3.0.6": {
+            "soccer_url": "./SOCcer_v3.0.6.onnx",
+            "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
+            "version": "3.0.6",
+            "pooling": "cls",
+            "soccerNetVersion": "0.0.2"
+        }
     }));
 
     constructor(version) {
@@ -47,7 +54,7 @@ export class SOCcer3 {
     async code_jobs(ids, JobTitles, JobTasks, crosswalk_info = null, k = 10) {
         await this.wait_until_ready()
         // embed the job info...
-        let embeddings = await embed_text(ids, JobTitles, JobTasks, this.embedder)
+        let embeddings = await embed_text(ids, JobTitles, JobTasks, this.embedder, this.version.pooling)
         const embeddings_tensor = new ort.Tensor('float32', embeddings.data, embeddings.dims);
 
         // crosswalk the crosswalk info... set the default

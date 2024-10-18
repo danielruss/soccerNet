@@ -3,9 +3,32 @@ import * as ort from 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.2/dist/o
 import XLSX from "https://cdn.sheetjs.com/xlsx-latest/package/xlsx.mjs"
 import { soc2010, SOCcer3 } from './soccer3_onnx.mjs';
 
-// to do: allow this to be passed in...
-let soccerNet = new SOCcer3("3.0.5")
-await soccerNet.wait_until_ready()
+
+let soccerNet = null;
+const versionSetup = async (defaultVersion) => {
+    let selectElement = document.getElementById("versionSelectElement")
+    SOCcer3.version_info.entries().forEach(([key, value]) => {
+        let el = document.createElement("option")
+        el.value = key;
+        el.innerText = `SOCcerNET ${value.soccerNetVersion}`
+        el.selected = key == defaultVersion
+        selectElement.insertAdjacentElement("beforeend", el)
+    });
+    selectElement.addEventListener("change", async (event) => {
+        soccerNet = new SOCcer3(selectElement.value)
+        await soccerNet.wait_until_ready()
+    })
+    if (!SOCcer3.version_info.has(defaultVersion)) {
+        console.log(`... selecting ${selectElement.lastElementChild.value} by default`);
+        selectElement.lastElementChild.selected = true;
+    }
+
+    console.log(selectElement.value)
+    soccerNet = new SOCcer3(selectElement.value)
+    await soccerNet.wait_until_ready()
+}
+
+await versionSetup()
 
 // UI components
 const progressbar = document.getElementById("codingProgress")
@@ -175,10 +198,11 @@ function code_file() {
     const file_list = document.getElementById("jobfile").files
     const n = document.getElementById("n").value || 10;
     if (file_list.length > 0) {
-        worker.postMessage({ type: "code_file", file: file_list[0], version: "3.0.5", n: n })
+        worker.postMessage({ type: "code_file", file: file_list[0], version: soccerNet.version.version, n: n })
     } else {
         readyToRun()
     }
 }
 
 fileRunButton.addEventListener("click", code_file);
+

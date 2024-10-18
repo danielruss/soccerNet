@@ -1,16 +1,16 @@
 import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@latest';
 import { abbrev } from './abbrev.js'
 
+
 export async function getEmbbedder(info) {
     let embedder = pipeline('feature-extraction', info.embedding_model_name, { quantized: false })
-    embedder.pooling = info.pooling
     return embedder
 }
 
-export async function embed_text(id, JobTitle, JobTask, embedder) {
+export async function embed_text(id, JobTitle, JobTask, embedder, pooling) {
     let res = preprocess({ id: id, JobTitle: JobTitle, JobTask: JobTask })
     let emb_obj = await embedder(res.JobTitleTask, {
-        pooling: "cls",
+        pooling: pooling,
         normalize: true,
     })
     return emb_obj;
