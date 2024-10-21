@@ -10,7 +10,7 @@ export const soc2010 = (await (await fetch("https://danielruss.github.io/codings
 export class SOCcer3 {
     static version_info = new Map(Object.entries({
         "3.0.5": {
-            "soccer_url": "./SOCcer_v3.0.5.onnx",
+            "soccer_url": "https://danielruss.github.io/soccerNet/SOCcer_v3.0.5.onnx",
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "version": "3.0.5",
             "pooling": "cls",
@@ -18,7 +18,7 @@ export class SOCcer3 {
             "train_data": "May2024"
         },
         "3.0.6": {
-            "soccer_url": "./SOCcer_v3.0.6.onnx",
+            "soccer_url": "https://danielruss.github.io/soccerNet/SOCcer_v3.0.6.onnx",
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "version": "3.0.6",
             "pooling": "cls",
@@ -67,7 +67,7 @@ export class SOCcer3 {
         }
         // if you give me crosswalk info.. do it now
         if (crosswalk_info && Object.keys(crosswalk_info).length > 0) {
-            crosswalks = await crosswalk(crosswalk_info)
+            crosswalks = await crosswalk(crosswalk_info, crosswalks)
         }
 
         const crosswalk_tensor = new ort.Tensor('float32', crosswalks.data, crosswalks.dims);
