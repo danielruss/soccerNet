@@ -104,7 +104,7 @@ export function topK(arr, k = 10) {
 }
 
 
-function onnxResultToArray(results) {
+export function onnxResultToArray(results) {
     const [rows, cols] = results.soc2010_out.dims;
     const data = Array.from(results.soc2010_out.cpuData);
 

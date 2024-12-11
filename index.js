@@ -2,7 +2,7 @@ console.log("... in index.js ...")
 import * as ort from 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.2/dist/ort.webgpu.bundle.min.mjs';
 import XLSX from "https://cdn.sheetjs.com/xlsx-latest/package/xlsx.mjs"
 import { soc2010, SOCcer3 } from './soccer3_onnx.mjs';
-
+import { clips } from './clips.mjs';
 
 let soccerNet = null;
 const versionSetup = async (defaultVersion) => {
