@@ -135,11 +135,7 @@ async function download_xlsx(fileHandle, metadata) {
 async function download_json_file(fileHandle, metadata) {
     download_opfs_file(fileHandle, metadata)
 }
-/*
-console.time("coding co")
-let soccerResults = await soccerNet.code_jobs(["id1", "id2"], ["ceo", "cio"], ["lead company", "run it"], [], 5)
-console.log(soccerResults)
-*/
+
 
 function buildTable1(res) {
     let tableElement = document.getElementById("res_table")
