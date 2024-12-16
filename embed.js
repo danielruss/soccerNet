@@ -7,8 +7,8 @@ export async function getEmbbedder(info) {
     return embedder
 }
 
-export async function embed_text_only(text, embedder, pooling) {
-    let emb_obj = await embedder(res.JobTitleTask, {
+export async function embed_text(text, embedder, pooling) {
+    let emb_obj = await embedder(text, {
         pooling: pooling,
         normalize: true,
     })
@@ -16,7 +16,7 @@ export async function embed_text_only(text, embedder, pooling) {
 }
 
 // To Do: this should not preprocess text.. Just embed...
-export async function embed_text(id, JobTitle, JobTask, embedder, pooling) {
+export async function old_embed_text(id, JobTitle, JobTask, embedder, pooling) {
     let res = preprocess({ id: id, JobTitle: JobTitle, JobTask: JobTask })
     let emb_obj = await embedder(res.JobTitleTask, {
         pooling: pooling,

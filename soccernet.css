@@ -54,6 +54,16 @@
     margin-bottom: 10px;
 }
 
+.hidden {
+    display: none;
+}
+
 #soccer_results {
     margin: 10px;
+}
+
+#ErrorSpan {
+    margin: 5px;
+    min-height: 20px;
+    color: red;
 }
