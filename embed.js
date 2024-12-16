@@ -7,7 +7,16 @@ export async function getEmbbedder(info) {
     return embedder
 }
 
-export async function embed_text(id, JobTitle, JobTask, embedder, pooling) {
+export async function embed_text(text, embedder, pooling) {
+    let emb_obj = await embedder(text, {
+        pooling: pooling,
+        normalize: true,
+    })
+    return emb_obj;
+}
+
+// To Do: this should not preprocess text.. Just embed...
+export async function old_embed_text(id, JobTitle, JobTask, embedder, pooling) {
     let res = preprocess({ id: id, JobTitle: JobTitle, JobTask: JobTask })
     let emb_obj = await embedder(res.JobTitleTask, {
         pooling: pooling,
@@ -16,6 +25,7 @@ export async function embed_text(id, JobTitle, JobTask, embedder, pooling) {
     return emb_obj;
 }
 
+// To Do: move this to the soccer worker or soccer.mjs ...
 function preprocess(args) {
     // handle NA/NaN/empty arguments
     args.JobTitle ??= " ";

@@ -34,13 +34,16 @@ const promises = [...knownCrosswalks.entries()].map(([system, url]) => buildCros
 await Promise.all(promises)
 
 
-export async function crosswalk(crosswalk_object, crosswalk_buffer) {
+export async function crosswalk(data, crosswalk_buffer) {
 
-    for (let k of knownCrosswalks.keys()) {
-        if (Object.hasOwn(crosswalk_object, k)) {
-            await crosswalk_from(k, crosswalk_object[k], crosswalk_buffer)
+    for (let variable of Object.entries(data)) {
+        let [key, value] = variable
+        if (knownCrosswalks.has(key)) {
+            console.log(`crosswalking from ${key}`)
+            await crosswalk_from(key, value, crosswalk_buffer)
         }
-    };
+
+    }
     return crosswalk_buffer;
 }
 

@@ -1,7 +1,7 @@
 import mocha from 'https://cdn.jsdelivr.net/npm/mocha@10.7.3/+esm'
 import { assert } from 'https://cdn.jsdelivr.net/npm/chai@5.1.1/+esm'
 import { crosswalk } from '../crosswalk.js'
-import { SOCcer3 } from '../soccer3_onnx.mjs'
+import { SOCcer3 } from '../soccer3.mjs'
 
 // we need to correct the url when we use unit testing...
 SOCcer3.version_info.set(

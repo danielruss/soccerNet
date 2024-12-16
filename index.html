@@ -22,6 +22,7 @@
                 <!-- <option value="json">JSON</option> -->
             </select>
             <span></span>
+            <span id="ErrorSpan"></span>
             <input id="codeJobs" type="button" value="Code Job Description">
             <label for="codingProgress">coding Progress: <span id="pctSpan"></span></label><span></span>
             <progress id="codingProgress" max="100" value="0"></progress>
@@ -31,18 +32,23 @@
     <div id="single_job_input" class="input_div">
         <form id="oneJobDescription">
             <span class="formHeader">Code an example Job Descriptions</span>
-            <label for="oneTitle">Job Title: </label>
-            <label for="oneTask">Job Task: </label>
-            <input id="oneTitle" type="text">
-            <input id="oneTask" type="text">
+            <label data-type="occupation" for="oneTitle">Job Title: </label>
+            <label data-type="occupation" for="oneTask">Job Task: </label>
+            <input data-type="occupation" id="oneTitle" type="text">
+            <input data-type="occupation" id="oneTask" type="text">
 
-            <label for="soc1980">soc1980: </label>
-            <label for="noc2011">noc2011: </label>
-            <input id="oneSoc1980" type="text">
-            <input id="oneNoc2011" type="text">
+            <label data-type="occupation" for="soc1980">soc1980: </label>
+            <label data-type="occupation" for="noc2011">noc2011: </label>
+            <input data-type="occupation" id="oneSoc1980" type="text">
+            <input data-type="occupation" id="oneNoc2011" type="text">
 
-            <label for="n1">number of codes returned: </label><span></span>
-            <input id="n1" type="number" value="10"><span></span>
+
+            <label class="hidden" data-type="industry" for="oneProduct">Products and Services: </label>
+            <label for="n1">number of codes returned: </label>
+            <span data-type="occupation"></span>
+            <input class="hidden" data-type="industry" id="oneProduct" type="text">
+            <input id="n1" type="number" value="10">
+
 
             <span></span><span></span>
             <input id="code1Job" type="button" value="Code Job Description">
