@@ -269,9 +269,9 @@ async function download_xlsx(fileHandle, metadata) {
         const csvData = e.target.result;
         const workbook = XLSX.read(csvData, { type: 'string' });
         if (!workbook.Props) workbook.Props = {};
-        workbook.Props.Author = `SOCcer ${metadata.soccerVersion.version}`
+        workbook.Props.Author = `${metadata.soccerVersion}`
         if (!workbook.Custprops) workbook.Custprops = {};
-        workbook.Custprops['SOCcer Version'] = `${metadata.soccerVersion.version}`
+        workbook.Custprops['SOCcer Version'] = `${metadata.soccerVersion}`
         workbook.Custprops['Start Time'] = `${metadata.startTime}`
         workbook.Custprops['End Time'] = `${metadata.endTime}`
 

@@ -137,6 +137,18 @@ export default class SOCcer {
             "coder": SOCcerNET,
             "required_columns": ["JobTitle", "JobTask"],
         },
+        "SOCcerNET 0.0.3.Jan27": {
+            "type": "SOCcerNET",
+            "soccer_url": "https://danielruss.github.io/soccerNet/SOCcer_v3.0.6.onnx",
+            "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
+            "pooling": "cls",
+            "version": "SOCcerNET 0.0.3.Jan27",
+            "soccerVersion": "3.0.7.Jan27",
+            "soccerNetVersion": "0.0.3.Jan27",
+            "train_data": "Oct2024",
+            "coder": SOCcerNET,
+            "required_columns": ["JobTitle", "JobTask"],
+        },
         "CLIPS 0.0.1": {
             "type": "CLIPS",
             "soccer_url": "./clips_0.0.1.onnx",
