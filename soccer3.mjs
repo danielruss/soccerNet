@@ -139,7 +139,7 @@ export default class SOCcer {
         },
         "SOCcerNET 0.0.3.Jan27": {
             "type": "SOCcerNET",
-            "soccer_url": "https://danielruss.github.io/soccerNet/SOCcer_v3.0.6.onnx",
+            "soccer_url": "https://danielruss.github.io/soccerNet/S3_jan27.onnx",
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "pooling": "cls",
             "version": "SOCcerNET 0.0.3.Jan27",
