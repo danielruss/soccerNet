@@ -1,0 +1,16 @@
+{
+    "embedding_model": "Xenova/GIST-small-Embedding-v0",
+    "embedding_pipeline_options": {
+        "dtype": "fp32",
+        "quantized": false,
+        "device": "webgpu"
+    },
+    "embedding_options": {
+        "pooling": "cls",
+        "normalize": true
+    },
+    "known_crosswalks": {
+        "soc1980": "soc1980_soc2010.json",
+        "noc2011": "noc2011_soc2010_via_soc2018.json"
+    }
+}
