@@ -76,33 +76,52 @@ let SOCcerNET = {
 let CLIPS = {
     name: "CLIPS",
     code: async function (args) {
+
         let { data, n, embedder, pooling, session } = args
         data = this.preprocess(data);
         let embeddings = await embed_text(data.products_services, embedder, pooling)
         const embeddings_tensor = new ort.Tensor('float32', embeddings.data, embeddings.dims);
 
-        // crosswalk the crosswalk info... default is all zeros...
-        let crosswalks = {
-            data: new Float32Array(embeddings.dims[0] * 840),
-            dims: [embeddings.dims[0], 840]
-        }
-        
-        crosswalks = await crosswalk(data, crosswalks)
-        const crosswalk_tensor = new ort.Tensor('float32', crosswalks.data, crosswalks.dims);
+        let xw = await import("./crosswalk2.js")
+        let naics2022 = await xw.CodingSystem.loadCodingSystem("naics2022");
 
-        const feeds = {
-            embedded_input: embeddings_tensor,
-            crosswalked_inp: crosswalk_tensor
+
+        let results;
+        if (args.version.clipsVersion == "0.0.1"){
+            const feeds = {
+                embedded_input: embeddings_tensor
+            }
+            results = await session.run(feeds);
+            results.naics2022_out = results.naics2022_5_out
+            delete results.naics2022_5_out
+        } else{
+            // crosswalk the crosswalk info... default is all zeros...
+            let crosswalks = {
+                data: new Float32Array(embeddings.dims[0] * naics2022.numberOfCodes),
+                dims: [embeddings.dims[0], naics2022.numberOfCodes]
+            }
+            let sic1987_naics2022_5d = await xw.Crosswalk.loadCrosswalk("sic1987","naics2022")
+            if (Object.hasOwn(data,'sic1987')) {
+                naics2022.multiHotEncode(crosswalks,
+                    data.sic1987.map( c=>sic1987_naics2022_5d.crosswalkCodes(c) ) )
+            }
+            const crosswalk_tensor = new ort.Tensor('float32', crosswalks.data, crosswalks.dims);
+            const feeds = {
+                embedded_input: embeddings_tensor,
+                crosswalked_inp: crosswalk_tensor
+            }
+            results = await session.run(feeds);
         }
-        let results = await session.run(feeds);
+
         // convert to a 2d-array
-        results = onnxResultToArray(results.naics2022_5_out)
+        results = onnxResultToArray(results.naics2022_out)
         // get the top k-results...
         results = results.map((row) => this.topK(row, n))
 
         return results
     },
     preprocess: function (data) {
+        data.products_services = data.products_services.map( (ps)=> ps.toLowerCase())
         return data
     },
     topK: function (arr, k) {
@@ -232,6 +251,7 @@ export default class SOCcer {
             embedder: this.embedder,
             pooling: this.version.pooling,
             session: this.session,
+            version: this.version,
         });
     }
 }

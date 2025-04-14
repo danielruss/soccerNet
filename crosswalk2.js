@@ -71,8 +71,9 @@ export class CodingSystem{
         return row * this.numberOfCodes + col
     }
 
-    multiHotEncode(codes){
-        let buffer = new Float32Array(codes.length * this.numberOfCodes);
+    // i have to pass in the buffer because I may
+    // crosswalk from multiple coding systems. (I think.)
+    multiHotEncode(buffer,codes){
         let indices=this.toIndices(codes);
         for (let row=0;row<indices.length;row++){
             for (let col=0;col<indices[row].length;col++){
@@ -91,7 +92,7 @@ export class Crosswalk {
     
     static async loadCrosswalk(from,to){
         if (Crosswalk.cachedCrosswalks.has(`${from}->${to}`)){
-            return cachedCrosswalks(`${from}->${to}`);
+            return Crosswalk.cachedCrosswalks.get(`${from}->${to}`);
         }
         
         if (!knownCrosswalkURLs.has(to)) {

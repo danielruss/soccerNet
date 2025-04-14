@@ -42,7 +42,8 @@ describe('Codingsystem Test', () => {
         let naics2022 = await CodingSystem.loadCodingSystem('naics2022');
         // this is Citrus (except Orange) Groves:9 and
         // Port and Harbor Operation:407
-        let z = naics2022.multiHotEncode([["11132","48831"]])
+        let buffer=new Float32Array(1*689)
+        let z = naics2022.multiHotEncode(buffer,[["11132","48831"]])
         assert.equal(z.buffer[9],1)
         assert.equal(z.buffer[407],1)
         assert.equal(z.buffer.reduce((acc,cv)=>acc+cv,0),2)
@@ -50,7 +51,8 @@ describe('Codingsystem Test', () => {
         assert.lengthOf(z.dim,2)
         assert.deepEqual(z.dim,[1,689])
 
-        z = naics2022.multiHotEncode([["11132"],["48831"]])
+        buffer=new Float32Array(2*689)
+        z = naics2022.multiHotEncode(buffer,[["11132"],["48831"]])
         assert.equal(z.buffer[9],1)
         assert.equal(z.buffer[689+407],1)
         assert.equal(z.buffer.reduce((acc,cv)=>acc+cv,0),2)
@@ -58,7 +60,8 @@ describe('Codingsystem Test', () => {
         assert.lengthOf(z.dim,2)
         assert.deepEqual(z.dim,[2,689])
 
-        z = naics2022.multiHotEncode([["11111","11112"],["11119","11121","11131"]])
+        buffer=new Float32Array(2*689)
+        z = naics2022.multiHotEncode(buffer,[["11111","11112"],["11119","11121","11131"]])
         assert.equal(z.buffer[0],1)
         assert.equal(z.buffer[1],1)
         assert.equal(z.buffer[689+6],1)
