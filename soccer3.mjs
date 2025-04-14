@@ -80,8 +80,19 @@ let CLIPS = {
         data = this.preprocess(data);
         let embeddings = await embed_text(data.products_services, embedder, pooling)
         const embeddings_tensor = new ort.Tensor('float32', embeddings.data, embeddings.dims);
+
+        // crosswalk the crosswalk info... default is all zeros...
+        let crosswalks = {
+            data: new Float32Array(embeddings.dims[0] * 840),
+            dims: [embeddings.dims[0], 840]
+        }
+        
+        crosswalks = await crosswalk(data, crosswalks)
+        const crosswalk_tensor = new ort.Tensor('float32', crosswalks.data, crosswalks.dims);
+
         const feeds = {
             embedded_input: embeddings_tensor,
+            crosswalked_inp: crosswalk_tensor
         }
         let results = await session.run(feeds);
         // convert to a 2d-array
@@ -163,7 +174,7 @@ export default class SOCcer {
         },
         "CLIPS 0.0.1": {
             "type": "CLIPS",
-            "soccer_url": "./clips_0.0.1.onnx",
+            "soccer_url": "./clips_v0.0.1.onnx",
             "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
             "version": "CLIPS 0.0.1",
             "clipsVersion": "0.0.1",
@@ -172,6 +183,17 @@ export default class SOCcer {
             "coder": CLIPS,
             "required_columns": ["products_services"],
         },
+        "CLIPS 0.0.2": {
+            "type": "CLIPS",
+            "soccer_url": "./clips_v0.0.2.onnx",
+            "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
+            "version": "CLIPS 0.0.2",
+            "clipsVersion": "0.0.2",
+            "pooling": "cls",
+            "train_data": "ind_train_march2025.feather",
+            "coder": CLIPS,
+            "required_columns": ["products_services"],
+        }
     }))
 
     constructor(version) {

@@ -5,7 +5,8 @@ const calcIndex = (row, col) => row * 840 + col
 const knownCrosswalks = new Map([
     ["soc1980", "https://danielruss.github.io/codingsystems/soc1980_soc2010.json"],
     ["noc2011", "https://danielruss.github.io/codingsystems/noc2011_soc2010_via_soc2018.json"],
-    ["isco1988", "https://danielruss.github.io/codingsystems/isco1988_soc2010.json"]
+    ["isco1988", "https://danielruss.github.io/codingsystems/isco1988_soc2010.json"],
+    ["sic1987", "https://danielruss.github.io/codingsystems/sic1987_naics2022.json"]
 ])
 export const availableCodingSystems = Array.from(knownCrosswalks.keys());
 
@@ -53,6 +54,8 @@ async function crosswalk_from(system, codes, buffer) {
     // a multi-hot encoding.  xw is the crosswalk
     // code is the code we are crosswalking to soc2010
     // index is the id of the job.
+    // WARNING: we now have sic->naics xw
+    // need to be careful here.
     function xw_one(xw, code, index, buffer) {
         let soc2010_codes = xw.get(code)
         if (!soc2010_codes) return

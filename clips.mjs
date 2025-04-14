@@ -12,6 +12,14 @@ export class SOCcer_CLIPS {
             "version": "0.0.1",
             "pooling": "cls",
             "train_data": "industry_training_data1.json"
+        },
+        "0.0.2": {
+            "clips_url": "./clips_0.0.2.onnx",
+            "embedding_model_name": 'Xenova/GIST-small-Embedding-v0',
+            "version": "0.0.2",
+            "pooling": "cls",
+            "train_data": "train_20250312.feather",
+            "qmd":"ind_data.qmd"
         }
     }))
 
