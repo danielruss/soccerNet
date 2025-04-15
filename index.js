@@ -136,14 +136,18 @@ async function code_one_job(event) {
     switch (soccerNet.version.type) {
         case "CLIPS":
             let ps = document.getElementById("oneProduct").value;
+            let sic1987 = document.getElementById("oneSic1987").value;
             if (ps.trim().length == 0) {
                 button.disabled = false;
                 return
             }
             chunk = {
-                id: ["id"],
+                Id: ["id"],
                 products_services: [ps],
             };
+            if (soccerNet.version.clipsVersion != "0.0.1" && sic1987.length>0){
+                chunk.sic1987 = [sic1987];
+            }
             res = await soccerNet.code_chunk(chunk, k)
             buildTable1(res, "naics2022")
             break;

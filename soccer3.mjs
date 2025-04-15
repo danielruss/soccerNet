@@ -96,16 +96,12 @@ let CLIPS = {
             delete results.naics2022_5_out
         } else{
             // crosswalk the crosswalk info... default is all zeros...
-            let crosswalks = {
-                data: new Float32Array(embeddings.dims[0] * naics2022.numberOfCodes),
-                dims: [embeddings.dims[0], naics2022.numberOfCodes]
-            }
             let sic1987_naics2022_5d = await xw.Crosswalk.loadCrosswalk("sic1987","naics2022")
+            let crosswalks = sic1987_naics2022_5d.createBuffer(data.Id.length)
             if (Object.hasOwn(data,'sic1987')) {
-                naics2022.multiHotEncode(crosswalks,
-                    data.sic1987.map( c=>sic1987_naics2022_5d.crosswalkCodes(c) ) )
+                sic1987_naics2022_5d.bufferedCrosswalk(data.sic1987,crosswalks)
             }
-            const crosswalk_tensor = new ort.Tensor('float32', crosswalks.data, crosswalks.dims);
+            const crosswalk_tensor = new ort.Tensor('float32', crosswalks, crosswalks.dims);
             const feeds = {
                 embedded_input: embeddings_tensor,
                 crosswalked_inp: crosswalk_tensor

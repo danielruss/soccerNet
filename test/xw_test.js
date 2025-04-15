@@ -42,32 +42,32 @@ describe('Codingsystem Test', () => {
         let naics2022 = await CodingSystem.loadCodingSystem('naics2022');
         // this is Citrus (except Orange) Groves:9 and
         // Port and Harbor Operation:407
-        let buffer=new Float32Array(1*689)
-        let z = naics2022.multiHotEncode(buffer,[["11132","48831"]])
-        assert.equal(z.buffer[9],1)
-        assert.equal(z.buffer[407],1)
-        assert.equal(z.buffer.reduce((acc,cv)=>acc+cv,0),2)
-        assert.isArray(z.dim)
-        assert.lengthOf(z.dim,2)
-        assert.deepEqual(z.dim,[1,689])
+        let buffer=naics2022.createBuffer(1);
+        naics2022.multiHotEncode(buffer,[["11132","48831"]])
+        assert.equal(buffer[9],1)
+        assert.equal(buffer[407],1)
+        assert.equal(buffer.reduce((acc,cv)=>acc+cv,0),2)
+        assert.isArray(buffer.dims)
+        assert.lengthOf(buffer.dims,2)
+        assert.deepEqual(buffer.dims,[1,689])
 
-        buffer=new Float32Array(2*689)
-        z = naics2022.multiHotEncode(buffer,[["11132"],["48831"]])
-        assert.equal(z.buffer[9],1)
-        assert.equal(z.buffer[689+407],1)
-        assert.equal(z.buffer.reduce((acc,cv)=>acc+cv,0),2)
-        assert.isArray(z.dim)
-        assert.lengthOf(z.dim,2)
-        assert.deepEqual(z.dim,[2,689])
+        buffer=naics2022.createBuffer(2);
+        naics2022.multiHotEncode(buffer,[["11132"],["48831"]])
+        assert.equal(buffer[9],1)
+        assert.equal(buffer[689+407],1)
+        assert.equal(buffer.reduce((acc,cv)=>acc+cv,0),2)
+        assert.isArray(buffer.dims)
+        assert.lengthOf(buffer.dims,2)
+        assert.deepEqual(buffer.dims,[2,689])
 
-        buffer=new Float32Array(2*689)
-        z = naics2022.multiHotEncode(buffer,[["11111","11112"],["11119","11121","11131"]])
-        assert.equal(z.buffer[0],1)
-        assert.equal(z.buffer[1],1)
-        assert.equal(z.buffer[689+6],1)
-        assert.equal(z.buffer[689+7],1)
-        assert.equal(z.buffer[689+8],1)
-        assert.equal(z.buffer.reduce((acc,cv)=>acc+cv,0),5)
+        buffer=naics2022.createBuffer(2);
+        naics2022.multiHotEncode(buffer,[["11111","11112"],["11119","11121","11131"]])
+        assert.equal(buffer[0],1)
+        assert.equal(buffer[1],1)
+        assert.equal(buffer[689+6],1)
+        assert.equal(buffer[689+7],1)
+        assert.equal(buffer[689+8],1)
+        assert.equal(buffer.reduce((acc,cv)=>acc+cv,0),5)
     })
 })
 
@@ -92,6 +92,30 @@ describe("Crosswalk Tests",()=>{
         assert.include(x,"11115","does not contain 11115")
         assert.include(x,"11116","does not contain 11116")
         assert.include(x,"11119","does not contain 11119")
+    }),
+    it('should crosswalk input sic data.',async ()=>{
+        // current data has one sic1987
+        let sic1987_naics2022 = await Crosswalk.loadCrosswalk("sic1987","naics2022")
+        let data = ['9621', '5441', '6153']
+        let buffer = sic1987_naics2022.createBuffer(data.length);
+        assert.lengthOf(buffer,3*689,"The buffer is not the correct size")
+        assert.deepEqual(buffer.dims,[3,689])
+        sic1987_naics2022.bufferedCrosswalk(data,buffer);
+        assert.equal(buffer[404],1)
+        assert.equal(buffer[682],1)
+        assert.equal(buffer[689+92],1)
+        assert.equal(buffer[689+93],1)
+        assert.equal(buffer[689+349],1)
+        assert.equal(buffer[2*689+450],1)
+        assert.equal(buffer[2*689+451],1)
+        assert.equal(buffer[2*689+452],1)
+        assert.equal(buffer[2*689+454],1)
+        assert.equal(buffer[2*689+459],1)
+
+        window.buffer=buffer
+    }),
+    it('should cleanly handle bad codes to crosswalk',()=>{
+        
     })
 })
 mocha.run();

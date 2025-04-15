@@ -67,6 +67,12 @@ export class CodingSystem{
         return result
     }
 
+    createBuffer(nrows){
+        let buffer = new Float32Array(nrows*this.numberOfCodes);
+        buffer.dims = [nrows,this.numberOfCodes]
+        return buffer;
+    }
+
     calcIndex(row, col){
         return row * this.numberOfCodes + col
     }
@@ -80,10 +86,8 @@ export class CodingSystem{
                 buffer[this.calcIndex(row,indices[row][col])] = 1;
             }
         }
-        return {
-            buffer,
-            dim: [codes.length,this.numberOfCodes]
-        }
+        //console.log(indices)
+        return buffer
     }
 }
 
@@ -113,6 +117,9 @@ export class Crosswalk {
         },new Map() )
 
         let xw = new Crosswalk(crosswalk,from,to)
+        xw.cs = await CodingSystem.loadCodingSystem(to)
+        xw.n = xw.cs.numberOfCodes;
+
         Crosswalk.cachedCrosswalks.set(`${xw.from}->${xw.to}`,xw)
         return xw;
     }
@@ -127,6 +134,36 @@ export class Crosswalk {
         return Crosswalk.cachedCrosswalks.has(`${this.from}->${this.to}`)
     }
 
+    calcIndex(row,index){
+        row*this.n+index;
+    }
+
+    createBuffer(nrows){
+        return this.cs.createBuffer(nrows);
+    }
+
+    bufferedCrosswalk(codes,buffer){
+        if (!Array.isArray(codes)){
+            codes=[codes]
+        }
+
+        // each codes is row...
+        let xw_codes=[];
+        codes.forEach( (c,row)=>{            
+            // if the current row is an array 
+            // crosswalk each code in the array
+            if (Array.isArray(c)){
+                c.forEach( (c1)=>{
+                    xw_codes.push(this.crosswalk.get(c1)??[])
+                })
+                xw_codes.flat()
+            }else{
+                c = c.toString();
+                xw_codes.push( this.crosswalk.get(c)??[] )
+            }
+        })
+        this.cs.multiHotEncode(buffer,xw_codes)
+    }
     crosswalkCodes(codes) {
         if (!Array.isArray(codes)){
             codes = [codes]
