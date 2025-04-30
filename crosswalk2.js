@@ -10,12 +10,12 @@ const knownCodingSystemInfo = new Map([
 
 const knownCrosswalkURLs = new Map([
     ["soc2010", new Map([
-        ["soc1980", "https://danielruss.github.io/codingsystems/soc1980_soc2010.json"],
-        ["noc2011", "https://danielruss.github.io/codingsystems/noc2011_soc2010_via_soc2018.json"],
-        ["isco1988", "https://danielruss.github.io/codingsystems/isco1988_soc2010.json"]
+        ["soc1980", `${baseURL}/soc1980_soc2010.json`],
+        ["noc2011", `${baseURL}/noc2011_soc2010_via_soc2018.json`],
+        ["isco1988", `${baseURL}/isco1988_soc2010.json`]
     ])],
     ["naics2022", new Map([
-        ["sic1987", "https://danielruss.github.io/codingsystems/sic1987_naics2022_5d.json"]
+        ["sic1987", `${baseURL}/sic1987_naics2022_5d.json`]
     ])]
 ])
 
