@@ -58,7 +58,7 @@ const versionSetup = async (defaultVersion) => {
     soccerNet = new SOCcer(selectElement.value)
     await soccerNet.wait_until_ready()
 }
-await versionSetup("SOCcerNET 0.0.2")
+await versionSetup("SOCcerNET 1.0.0")
 
 
 
