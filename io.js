@@ -115,7 +115,7 @@ async function parseXLSX(file, soccer, n, callbacks) {
     // loading the data...
     const workbook = await XLSX.read(await file.arrayBuffer(), { type: "array" });
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(worksheet);
+    const data = XLSX.utils.sheet_to_json(worksheet,{defval:""});
     const outputFields = Object.keys(data[0])
     let metadata = {
         soccerVersion: soccer.version.version,
