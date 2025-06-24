@@ -47,8 +47,8 @@ function preprocess(args) {
     args.JobTask = args.JobTask.map(txt => clean(txt))
 
     // handle abbreviations...
-    args.JobTitle = args.JobTitle.map(txt => Object.hasOwn(abbrev, txt) && !Array.isArray(abbrev[txt]) ? abbrev[txt] : txt)
-    args.JobTask = args.JobTask.map(txt => Object.hasOwn(abbrev, txt) && !Array.isArray(abbrev[txt])  ? abbrev[txt] : txt)
+    args.JobTitle = args.JobTitle.map(txt => Object.hasOwn(abbrev, txt)? abbrev[txt] : txt)
+    args.JobTask = args.JobTask.map(txt => Object.hasOwn(abbrev, txt) ? abbrev[txt] : txt)
 
     // combine the job title and job task
     args.JobTitleTask = args.JobTitle.map((_, indx) => `${args.JobTitle[indx]} ${args.JobTask[indx]}`.trim());
